@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EditDataView: View {
-    
+
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.dismiss) private var dismiss
     @State var dog: DogModel

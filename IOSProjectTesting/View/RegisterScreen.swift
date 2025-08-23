@@ -10,7 +10,9 @@ struct RegisterScreen: View {
 
             VStack(spacing: 25) {
                 Group {
+
                     // Email Field
+
                     TextField("Email", text: $register_vm.email)
                         .autocapitalization(.none)
                         .padding()

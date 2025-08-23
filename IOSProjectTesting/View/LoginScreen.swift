@@ -7,6 +7,7 @@ struct LoginScreen: View {
         Group {
             if loginVM.isCheckingAuth {
                 ProgressView("Checking session...")
+
             } else {
                 if loginVM.userLoggedIn {
                     ListView()
@@ -30,7 +31,9 @@ struct LoginScreen: View {
                         .foregroundColor(.black)
                         .padding(.top, 40)
 
+
                     // Input Fields
+
                     VStack(spacing: 20) {
                         TextField("Username or Email", text: $loginVM.email)
                             .autocapitalization(.none)
@@ -128,10 +131,17 @@ struct LoginScreen: View {
                     }
                     .padding(.top, 10)
 
+
                     Spacer()
                 }
                 .padding(.horizontal, 30)
                 .alert("Login Failed", isPresented: $loginVM.loginErrorMessage) {
+
+                    Spacer()
+                }
+                .padding(.horizontal, 30)
+                .alert(loginVM.loginError, isPresented: $loginVM.loginErrorMessage) {
+
                     Button("Retry", role: .cancel) { }
                 }
                 .disabled(loginVM.isLoading)

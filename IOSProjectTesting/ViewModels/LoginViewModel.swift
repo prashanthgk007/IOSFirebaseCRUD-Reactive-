@@ -7,14 +7,14 @@ class LoginVM {
     // 🔹 UI State
     var email: String = "" { didSet { emailSubject.send(email) } }
     var password: String = "" { didSet { passwordSubject.send(password) } }
-    var isSecure: Bool = true
+    var loginError: String = ""
     
+    var isSecure: Bool = true
     var isLoading: Bool = false
     var showValidation = false
     var isCheckingAuth: Bool = true
     var showToast = false
     
-    // 🔹 Messages
     var registerSuccessMessage: Bool = false { didSet { registerSuccessSubject.send(registerSuccessMessage) } }
     var registerErrorMessage: Bool = false
     var loginSuccessMessage: Bool = false
@@ -40,7 +40,7 @@ class LoginVM {
                 print("📩 Live email entered: \(value)")
             }
             .store(in: &cancellables)
-
+        
         Auth.auth().addStateDidChangeListener { [weak self] _, user in
             DispatchQueue.main.async {
                 let loggedIn = (user != nil)
@@ -69,26 +69,48 @@ class LoginVM {
             }
         }
     }
-
+    
     func login() {
         guard isEmailValid(), isPasswordValid() else { return }
-
+        
         isLoading = true
-
+        
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
             guard let self else { return }
             DispatchQueue.main.async {
                 self.isLoading = false
+                
                 if let error = error {
                     print("Login error: \(error.localizedDescription)")
                     self.loginErrorMessage = true
-                } else {
-                    self.showToast = true
+                    
+                    if let error = error as NSError? {
+                        print("Error Code: \(error.code)")
+                        print("Error Description: \(error.localizedDescription)")
+                        self.loginErrorMessage = true
+                        
+                        switch AuthErrorCode(rawValue: error.code) {
+                        case .invalidEmail:
+                            self.loginError = "The email address is badly formatted."
+                        case .userNotFound:
+                            self.loginError = "No account found with this email."
+                        case .wrongPassword:
+                            self.loginError = "The password is incorrect."
+                        case .userDisabled:
+                            self.loginError = "This account has been disabled."
+                        case .networkError:
+                            self.loginError = "Network error. Please try again."
+                        default:
+                            self.loginError = error.localizedDescription
+                        }
+                    } else {
+                        self.showToast = true
+                    }
                 }
             }
         }
     }
-
+    
     func logout() {
         do {
             try Auth.auth().signOut()
@@ -101,26 +123,7 @@ class LoginVM {
         }
     }
     
-    
     // MARK: - Validation
-    var emailError: String? {
-        if email.isEmpty {
-            return "Email is required"
-        } else if !isEmailValid() {
-            return "Enter a valid email address"
-        }
-        return nil
-    }
-
-    var passwordError: String? {
-        if password.isEmpty {
-            return "Password is required"
-        } else if password.count < 6 {
-            return "Password must be at least 6 characters"
-        }
-        return nil
-    }
-    
     func isEmailValid() -> Bool {
         let emailRegex = #"^\S+@\S+\.\S+$"#
         return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
@@ -142,5 +145,24 @@ class LoginVM {
             return false
         }
         return true
+    }
+    
+    // MARK: - Additional Validation Errors
+    var emailError: String? {
+        if email.isEmpty {
+            return "Email is required"
+        } else if !isEmailValid() {
+            return "Enter a valid email address"
+        }
+        return nil
+    }
+    
+    var passwordError: String? {
+        if password.isEmpty {
+            return "Password is required"
+        } else if password.count < 6 {
+            return "Password must be at least 6 characters"
+        }
+        return nil
     }
 }

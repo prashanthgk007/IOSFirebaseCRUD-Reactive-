@@ -57,7 +57,8 @@ class DogDataViewModel {
     
     func addData(dogBreed: String, ids: String) {
         DispatchQueue.main.async {
-            self.isSaving = true   // 👈 UI reacts immediately
+
+
         }
         
         let db = Firestore.firestore()
