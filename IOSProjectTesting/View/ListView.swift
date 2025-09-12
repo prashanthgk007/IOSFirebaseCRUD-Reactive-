@@ -16,7 +16,7 @@ struct ListView: View {
                                 dataManager.showEditSheet = true
                             }
                             .tint(.blue)
-                            
+                            //delete
                             Button("Delete") {
                                 dataManager.deleteData(dog: dog)
                             }
