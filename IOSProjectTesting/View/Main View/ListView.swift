@@ -9,7 +9,7 @@ struct ListView: View {
         NavigationView {
             List {
                 ForEach(dataManager.getList, id: \.id) { dog in
-                    Text(dog.breed)
+                    RowView(dogModel: dog)
                         .swipeActions {
                             Button("Edit") {
                                 dataManager.selectedDog = dog
@@ -56,7 +56,7 @@ struct ListView: View {
             }
             .overlay(alignment: .bottom) {
                 if loginVM.showToast {
-                    Text("✅ Logged In!")
+                    Text("Logged In!")
                         .padding()
                         .background(.green.opacity(0.8))
                         .cornerRadius(8)

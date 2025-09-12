@@ -85,10 +85,6 @@ class LoginVM {
                     self.loginErrorMessage = true
                     
                     if let error = error as NSError? {
-                        print("Error Code: \(error.code)")
-                        print("Error Description: \(error.localizedDescription)")
-                        self.loginErrorMessage = true
-                        
                         switch AuthErrorCode(rawValue: error.code) {
                         case .invalidEmail:
                             self.loginError = "The email address is badly formatted."
@@ -103,20 +99,31 @@ class LoginVM {
                         default:
                             self.loginError = error.localizedDescription
                         }
-                    } else {
-                        self.showToast = true
                     }
+                } else {
+                    self.userLoggedIn = true
+                    self.showToast = true
+                    NotificationHelper.showNotification(
+                        title: "Login Successful",
+                        body: "Welcome back, \(self.email)"
+                    )
+
                 }
             }
         }
     }
+
     
     func logout() {
         do {
             try Auth.auth().signOut()
             DispatchQueue.main.async {
                 self.userLoggedIn = false
-                self.userLoggedInSubject.send(false) // 🔹 Combine sync
+                self.userLoggedInSubject.send(false)
+                NotificationHelper.showNotification(
+                    title: "Alert",
+                    body: "You've been logged out"
+                )
             }
         } catch {
             print("Error signing out: \(error.localizedDescription)")

@@ -14,7 +14,10 @@ struct IOSProjectTestingApp: App {
     
     init() {
         FirebaseApp.configure();
+        NotificationHelper.requestNotificationPermission()
     }
+    
+
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([

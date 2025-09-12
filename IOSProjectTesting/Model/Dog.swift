@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct DogModel: Identifiable {
+struct DogModel: Identifiable, Hashable {
     
     var id: String
     var breed: String

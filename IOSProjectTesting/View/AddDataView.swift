@@ -13,9 +13,6 @@ struct AddDataView: View {
                         TextField("Dog Name", text: $dataManager.breed)
                         
                         TextField("ID", text: $dataManager.id)
-
-//                            .disabled(true)
-
                             .foregroundColor(.gray)
                     }
                 }

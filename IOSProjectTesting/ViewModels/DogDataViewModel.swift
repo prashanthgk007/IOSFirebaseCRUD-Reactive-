@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUICore
 import Firebase
 import Combine
 import Observation
@@ -56,10 +57,6 @@ class DogDataViewModel {
     }
     
     func addData(dogBreed: String, ids: String) {
-        DispatchQueue.main.async {
-
-
-        }
         
         let db = Firestore.firestore()
         let ref = db.collection("Dog").document(ids)
@@ -71,6 +68,7 @@ class DogDataViewModel {
                 } else {
                     self.addedDataSuccess = true
                     self.isSaving = false
+                    NotificationHelper.showNotification(title: "Alert", body: "\(dogBreed) was added successfully!", badge: 1, assetName: "puppy_image", assetType: "png")
                 }
             }
         }
@@ -92,6 +90,7 @@ class DogDataViewModel {
                 else {
                     self.editedDataSuccess = true
                     self.isEditing = false
+                    NotificationHelper.showNotification(title: "Alert", body: "\(dog.breed) was updated successfully!")
                 }
             }
         }
@@ -113,7 +112,7 @@ class DogDataViewModel {
                         self.getList.remove(at: index)
                     }
                     self.deletedDataSuccess = true
-                    
+                    NotificationHelper.showNotification(title: "Alert", body: "\(dog.breed) was deleted!")
                 }
                 self.isDeleting = false
             }
